@@ -25,7 +25,7 @@ class NewTweetActivity : AppCompatActivity() {
         binding=ActivityNewTweetBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-
+        val token = intent.getStringExtra("TOKENX")
 
         // Set up the button click listener
         binding.txtPost.setOnClickListener {
@@ -36,7 +36,7 @@ class NewTweetActivity : AppCompatActivity() {
                 Toast.makeText(this, "Tweet cannot be empty", Toast.LENGTH_SHORT).show()
             } else {
                 // Call the function to post the tweet
-                postTweet(tweetText)
+                postTweet(token,tweetText)
             }
         }
 
@@ -50,11 +50,12 @@ class NewTweetActivity : AppCompatActivity() {
         }
     }
 
-    private fun postTweet(tweetText: String) {
+    private fun postTweet(token:String?,tweetText: String) {
         // Use Coroutines to make the network call
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = RetrofitInstance.RetrofitClient.apiService.postTweet(getToken(), TweetRequest(tweetText))
+                Log.d("Request Token2","my Token is ${getToken()}")
+                val response = RetrofitInstance.RetrofitClient.apiService.postTweet(getToken(),TweetRequest(tweetText))
                 if (response.isSuccessful) {
                     val tweetResponse = response.body()
                     Log.d("New tweet","id -> ${tweetResponse?.tweet}, tweet -> ${tweetResponse?.tweet}, version -> ${tweetResponse?.__v}")

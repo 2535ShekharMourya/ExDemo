@@ -23,11 +23,20 @@ class LoginActivity : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     private var token:String?=null
     private var userId:String?=null
+    private lateinit var sharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityLoginBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+
+        sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
+        if (getToken()!=null){
+            startActivity(Intent(this,HomeScreenActivity::class.java))
+            finish()
+        }
+
+       // saveTokenAndId(token, userId)
         // Submit button click listener
         binding.txt12Next.setOnClickListener {
             val email = binding.edt12Email.text.toString()
@@ -39,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 // Call the login function
                 loginUser(email, password)
+
             }
         }
         binding.txtSignup.setOnClickListener {
@@ -57,9 +67,10 @@ class LoginActivity : AppCompatActivity() {
         // Use Coroutines to make the network call
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = RetrofitInstance.RetrofitClient.apiService.loginUser(getToken(),LoginRequest(email, password))
+                val response = RetrofitInstance.RetrofitClient.apiService.loginUser(LoginRequest(email, password))
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
+                    saveTokenAndId(loginResponse?.token,loginResponse?._id)
                     token=loginResponse?.token
                     Log.d("Token", "request token is $token")
                     userId=loginResponse?._id
@@ -68,7 +79,9 @@ class LoginActivity : AppCompatActivity() {
                     // Handle success: Move to next screen or show success message
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@LoginActivity, "Welcome ${loginResponse?.first_name}", Toast.LENGTH_LONG).show()
-                        startActivity(Intent(this@LoginActivity,HomeScreenActivity::class.java))
+                        val intent=Intent(this@LoginActivity,HomeScreenActivity::class.java)
+                        //intent.putExtra("TOKEN",getToken())
+                        startActivity(intent)
                         finish()
                     }
                 } else {
@@ -86,6 +99,13 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    // Save token and id to SharedPreferences
+    private fun saveTokenAndId(token: String?, userId: String?) {
+        val editor = sharedPreferences.edit()
+        editor.putString("TOKEN", token)
+        editor.putString("USER_ID", userId)
+        editor.apply() // or editor.commit() for synchronous saving
     }
     // Retrieve token from SharedPreferences
     private fun getToken(): String? {

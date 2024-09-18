@@ -31,7 +31,7 @@ class SignupActivity : AppCompatActivity() {
         setContentView(binding.root)
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
-        saveTokenAndId(token, userId)
+
 
         binding.txtNext1.setOnClickListener {
             // Get user input from EditText fields
@@ -58,6 +58,41 @@ class SignupActivity : AppCompatActivity() {
             insets
         }
     }
+    private fun fetchWelcomeMessage() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Make the network request
+                val response = RetrofitInstance.RetrofitClient.apiService.getWelcomeMessage(getToken())
+                if (response.isSuccessful) {
+                    val welcomeResponse = response.body()
+                    // Update the UI on the main thread
+                    Log.d("Welcome Screen","message retrieve successfully")
+                    withContext(Dispatchers.Main) {
+                        welcomeResponse?.let {
+                           val intent=Intent(this@SignupActivity,WelcomeActivity::class.java)
+                            intent.putExtra("message",it.message)
+                            startActivity(intent)
+                            finish()
+                        }
+
+
+                    }
+                } else {
+                    Log.d("Welcome Screen","Failed to retrieve message")
+                    withContext(Dispatchers.Main) {
+                        startActivity(Intent(this@SignupActivity,HomeScreenActivity::class.java))
+                        finish()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("Welcome Screen","Error ${e.message}")
+                withContext(Dispatchers.Main) {
+                    startActivity(Intent(this@SignupActivity,HomeScreenActivity::class.java))
+                    finish()
+                }
+            }
+        }
+    }
 
     private fun registerUser(firstName: String, lastName: String, email: String, password: String) {
         // Create request object
@@ -77,6 +112,7 @@ class SignupActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         // Handle success
                         val registerResponse = response.body()
+                        saveTokenAndId(registerResponse?.token, registerResponse?._id)
                         token=registerResponse?.token
                         Log.d("Token", "request token is $token")
                         userId=registerResponse?._id
@@ -87,8 +123,7 @@ class SignupActivity : AppCompatActivity() {
                             "User registered: ${registerResponse?.first_name}",
                             Toast.LENGTH_LONG
                         ).show()
-                        startActivity(Intent(this@SignupActivity,LoginActivity::class.java))
-                        finish()
+                        fetchWelcomeMessage()
                     } else {
                         Log.d("userRegister","user not registered ")
                         // Handle failure
@@ -112,7 +147,7 @@ class SignupActivity : AppCompatActivity() {
     // Save token and id to SharedPreferences
     private fun saveTokenAndId(token: String?, userId: String?) {
         val editor = sharedPreferences.edit()
-        editor.putString("TOKEN", "Bearer $token")
+        editor.putString("TOKEN", token)
         editor.putString("USER_ID", userId)
         editor.apply() // or editor.commit() for synchronous saving
     }

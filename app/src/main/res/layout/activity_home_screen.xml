@@ -38,14 +38,15 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_new_tweet"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="59dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="44dp"
         android:clickable="true"
+        android:backgroundTint="#4CAF50"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.951"
+        app:layout_constraintHorizontal_bias="0.924"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
 

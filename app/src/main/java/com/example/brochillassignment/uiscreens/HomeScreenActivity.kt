@@ -21,7 +21,6 @@ import kotlinx.coroutines.withContext
 
 class HomeScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeScreenBinding
-    private var tweetsAdapter = TweetsAdapter(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +28,16 @@ class HomeScreenActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
+        // Get the token from the Intent
+        val token = intent.getStringExtra("TOKEN")
+
+
         setupRecyclerView()
-        fetchTweets()
+        fetchTweets(token)
         binding.addNewTweet.setOnClickListener {
-            startActivity(Intent(this,NewTweetActivity::class.java))
+            val intent=Intent(this,NewTweetActivity::class.java)
+            intent.putExtra("TOKENX",token)
+            startActivity(intent)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -45,20 +50,22 @@ class HomeScreenActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         binding.recyclerviewTweets.apply {
             layoutManager = LinearLayoutManager(this@HomeScreenActivity)
-            adapter = tweetsAdapter
+
         }
     }
-    private fun fetchTweets() {
+    private fun fetchTweets(token:String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response = RetrofitInstance.RetrofitClient.apiService.getTweets(getToken(),getUserId())
+                Log.d("Request Token1","my Token is ${getToken()}")
+                val response = RetrofitInstance.RetrofitClient.apiService.getTweets(getToken())
                 if (response.isSuccessful) {
+
                     val tweetsResponse = response.body()
-                    Log.d("Home Screen","user tweets shows successfully")
+
+                    Log.d("Home Screen",response.body().toString())
                     withContext(Dispatchers.Main) {
                         tweetsResponse?.let {
-                            tweetsAdapter = TweetsAdapter(it.tweets)
-                            binding.recyclerviewTweets.adapter = tweetsAdapter
+                            binding.recyclerviewTweets.adapter = TweetsAdapter(it)
                         }
                     }
                 } else {
@@ -69,6 +76,7 @@ class HomeScreenActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Log.d("Home Screen","Error ${e.message}")
+                e.printStackTrace()
                 withContext(Dispatchers.Main) {
                     // Handle exception
                     Toast.makeText(this@HomeScreenActivity, "Error ${e.message}", Toast.LENGTH_SHORT).show()
