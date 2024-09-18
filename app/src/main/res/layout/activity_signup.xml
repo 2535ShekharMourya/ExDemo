@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".uiscreens.SignupActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="399dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:text="Login Screen"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edt_first_name"
+        android:layout_width="310dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/edt_background"
+        android:ems="10"
+        android:hint="First Name"
+        android:inputType="text"
+        android:paddingStart="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/edt_last_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+    <EditText
+        android:id="@+id/edt_last_name"
+        android:layout_width="310dp"
+        android:layout_height="68dp"
+        android:background="@drawable/edt_background"
+        android:ems="10"
+        android:hint="Last Name"
+        android:inputType="text"
+        android:paddingStart="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/edt_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_first_name"
+        app:layout_constraintVertical_bias="0.444" />
+
+    <TextView
+        android:id="@+id/txtNext1"
+        android:layout_width="206dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/txt2_back"
+        android:gravity="center"
+        android:text="Next"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.448"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/edt_first_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/edt_email"
+        android:layout_width="310dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/edt_background"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="text"
+        android:paddingStart="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/edt_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_last_name" />
+
+    <EditText
+        android:id="@+id/edt_password"
+        android:layout_width="310dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="156dp"
+        android:background="@drawable/edt_background"
+        android:ems="10"
+        android:inputType="text"
+        android:paddingStart="10dp"
+        android:text="***********"
+        app:layout_constraintBottom_toTopOf="@+id/txtNext1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_email" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
