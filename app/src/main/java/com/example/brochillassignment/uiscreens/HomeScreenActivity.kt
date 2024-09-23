@@ -9,11 +9,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.brochillassignment.R
+import com.example.brochillassignment.adapters.SwipeGesture
 import com.example.brochillassignment.adapters.TweetsAdapter
 import com.example.brochillassignment.databinding.ActivityHomeScreenBinding
+import com.example.brochillassignment.models.Tweet
 import com.example.brochillassignment.network.RetrofitInstance
+import com.example.brochillassignment.viewmodel.TweetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +27,7 @@ import kotlinx.coroutines.withContext
 
 class HomeScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeScreenBinding
+    private lateinit var tweetViewModel: TweetViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,17 +35,22 @@ class HomeScreenActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        // Get the token from the Intent
-        val token = intent.getStringExtra("TOKEN")
+        tweetViewModel = ViewModelProvider(this).get(TweetViewModel::class.java)
 
+        binding.logout.setOnClickListener {
+            clearSharedPref()
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+        }
 
         setupRecyclerView()
-        fetchTweets(token)
+        fetchTweets()
         binding.addNewTweet.setOnClickListener {
             val intent=Intent(this,NewTweetActivity::class.java)
-            intent.putExtra("TOKENX",token)
             startActivity(intent)
+            finish()
         }
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -51,21 +63,30 @@ class HomeScreenActivity : AppCompatActivity() {
         binding.recyclerviewTweets.apply {
             layoutManager = LinearLayoutManager(this@HomeScreenActivity)
 
+
         }
     }
-    private fun fetchTweets(token:String?) {
+    private fun fetchTweets() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Log.d("Request Token1","my Token is ${getToken()}")
                 val response = RetrofitInstance.RetrofitClient.apiService.getTweets(getToken())
                 if (response.isSuccessful) {
 
-                    val tweetsResponse = response.body()
-
                     Log.d("Home Screen",response.body().toString())
                     withContext(Dispatchers.Main) {
-                        tweetsResponse?.let {
-                            binding.recyclerviewTweets.adapter = TweetsAdapter(it)
+                        if (tweetViewModel.tweetList == null) {
+                            val tweetList: ArrayList<Tweet>? = response.body()
+                            tweetList?.let {
+                                // Reverse and store the list in ViewModel
+                                tweetViewModel.tweetList = it.reversed() as ArrayList
+                            }
+                        }
+                        // Use the list from ViewModel for the RecyclerView
+                        tweetViewModel.tweetList?.let { reversedTweets ->
+                            val adapter=TweetsAdapter(reversedTweets)
+                            swipeGestureImp(adapter,reversedTweets)
+                            binding.recyclerviewTweets.adapter = adapter
                         }
                     }
                 } else {
@@ -85,6 +106,26 @@ class HomeScreenActivity : AppCompatActivity() {
         }
     }
 
+    private fun swipeGestureImp(adapter: TweetsAdapter,tweetList:ArrayList<Tweet>) {
+      val swipegesture=object :SwipeGesture(this){
+          override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+              when(direction){
+                  ItemTouchHelper.LEFT ->{
+                      adapter.deleteItem(viewHolder.adapterPosition)
+
+                  }
+                  ItemTouchHelper.RIGHT -> {
+                      val archiveItem=tweetList[viewHolder.adapterPosition]
+                      adapter.deleteItem(viewHolder.adapterPosition)
+                      adapter.addItem(tweetList.size,archiveItem)
+                  }
+              }
+          }
+      }
+        val touchHelper=ItemTouchHelper(swipegesture)
+        touchHelper.attachToRecyclerView(binding.recyclerviewTweets)
+    }
+
     // Retrieve token from SharedPreferences
     private fun getToken(): String? {
         val sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
@@ -95,5 +136,13 @@ class HomeScreenActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
         return sharedPreferences.getString("USER_ID", null)
     }
+    // Retrieve user id from SharedPreferences
+    private fun clearSharedPref(){
+        val sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
+        val editor=sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
+    }
+
 
 }

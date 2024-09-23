@@ -24,30 +24,43 @@
         android:layout_height="3dp"
         android:layout_marginBottom="32dp"
         android:background="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/edt_tweet"
+        app:layout_constraintBottom_toTopOf="@+id/tweet_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.0" />
 
-    <EditText
-        android:id="@+id/edt_tweet"
-        android:layout_width="358dp"
-        android:layout_height="401dp"
-        android:layout_marginTop="44dp"
-        android:background="@drawable/new_tweet_back"
-        android:gravity="top|start"
-        android:hint="Add tweet"
-        android:padding="8dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tweet_container"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toTopOf="@+id/txt_post"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.306">
+
+        <EditText
+            android:id="@+id/edt_tweet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="top|start"
+            android:hint="Add tweet"
+            android:padding="10dp" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/txt_post"
-        android:layout_width="137dp"
-        android:layout_height="48dp"
-        android:background="@drawable/txt_background"
+        android:layout_width="197dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="56dp"
+        android:background="@drawable/txt2_back"
         android:gravity="center"
         android:text="Post"
         android:textColor="@color/white"
@@ -55,7 +68,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edt_tweet" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

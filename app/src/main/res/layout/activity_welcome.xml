@@ -25,18 +25,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="64dp"
-        android:background="@drawable/circular_view_welcome"
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_image"
+        android:layout_width="163dp"
+        android:layout_height="113dp"
+        android:layout_marginTop="100dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:src="@drawable/brochil_image_icon"
+        app:civ_border_color="#FF000000"
+
+        app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.543"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/txt_welcome"
@@ -50,37 +54,25 @@
         app:layout_constraintBottom_toTopOf="@+id/txt_start_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/txt_start_button"
-        android:layout_width="177dp"
-        android:layout_height="67dp"
+        android:layout_width="216dp"
+        android:layout_height="68dp"
         android:layout_marginBottom="44dp"
-        android:background="@drawable/txt_background"
-        android:text="START"
-        android:textStyle="bold"
-        android:textSize="34sp"
-        android:textColor="@color/white"
+        android:background="@drawable/txt2_back"
         android:gravity="center"
+        android:text="START"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Image"
-        android:gravity="center"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

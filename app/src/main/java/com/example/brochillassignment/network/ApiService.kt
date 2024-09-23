@@ -29,7 +29,7 @@ interface ApiService{
     suspend fun postTweet(@Header("x-api-key") token: String?, @Body request: TweetRequest): Response<TweetResponse>
 
     @GET("tweets")
-    suspend fun getTweets(@Header("x-api-key") token: String?): Response<List<Tweet>>
+    suspend fun getTweets(@Header("x-api-key") token: String?): Response<ArrayList<Tweet>>
 
     @GET("welcome")
     suspend fun getWelcomeMessage(@Header("x-api-key") token: String?): Response<WelcomeResponse>

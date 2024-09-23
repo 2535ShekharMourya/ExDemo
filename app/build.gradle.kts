@@ -59,4 +59,6 @@ dependencies {
 
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation ("com.github.bumptech.glide:glide:4.15.1")
+    implementation (libs.circleimageview)
+    implementation (libs.recyclerview.swipedecorator)
 }

@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.brochillassignment.R
@@ -25,6 +26,8 @@ class NewTweetActivity : AppCompatActivity() {
         binding=ActivityNewTweetBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+
+
         val token = intent.getStringExtra("TOKENX")
 
         // Set up the button click listener
@@ -36,7 +39,7 @@ class NewTweetActivity : AppCompatActivity() {
                 Toast.makeText(this, "Tweet cannot be empty", Toast.LENGTH_SHORT).show()
             } else {
                 // Call the function to post the tweet
-                postTweet(token,tweetText)
+                postTweet(tweetText)
             }
         }
 
@@ -50,7 +53,7 @@ class NewTweetActivity : AppCompatActivity() {
         }
     }
 
-    private fun postTweet(token:String?,tweetText: String) {
+    private fun postTweet(tweetText: String) {
         // Use Coroutines to make the network call
         CoroutineScope(Dispatchers.IO).launch {
             try {

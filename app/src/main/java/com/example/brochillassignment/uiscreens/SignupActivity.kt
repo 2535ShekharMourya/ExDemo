@@ -5,8 +5,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,25 +31,42 @@ class SignupActivity : AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+        binding.btnLogin.setOnClickListener { loginPlease() }
+
+       /* emailFocusListener()
+        passwordFocusListener()*/
+        //binding.submitButton.setOnClickListener { submitForm() }
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
 
 
-        binding.txtNext1.setOnClickListener {
+        binding.submitButton.setOnClickListener {
+          //  submitForm()
             // Get user input from EditText fields
             val firstName = binding.edtFirstName.text.toString().trim()
             val lastName = binding.edtLastName.text.toString().trim()
             val email = binding.edtEmail.text.toString().trim()
             val password = binding.edtPassword.text.toString().trim()
-
             // Validate input
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Call the function to make the POST request
-            registerUser(firstName, lastName, email, password)
+            // Validate Email
+            if (!isValidEmail(email)) {
+                binding.edtEmail.error = "Invalid email format"
+            } else if (!isValidPassword(password)) {
+                binding.edtPassword.error = "Password must contain at least 6 characters, including a number, letter, and special character"
+            } else {
+                // Both email and password are valid
+                // Call the function to make the POST request
+                registerUser(firstName, lastName, email, password)
+            }
+
+
+
+
         }
 
 
@@ -58,6 +77,12 @@ class SignupActivity : AppCompatActivity() {
             insets
         }
     }
+
+    private fun loginPlease() {
+        startActivity(Intent(this@SignupActivity,LoginActivity::class.java))
+        finish()
+    }
+
     private fun fetchWelcomeMessage() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -106,10 +131,11 @@ class SignupActivity : AppCompatActivity() {
         // Make API call using coroutine
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val response =
-                    RetrofitInstance.RetrofitClient.apiService.registerUser(registerRequest)
+                val response = RetrofitInstance.RetrofitClient.apiService.registerUser(registerRequest)
+                Log.d("SignUp",response.toString())
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
+
                         // Handle success
                         val registerResponse = response.body()
                         saveTokenAndId(registerResponse?.token, registerResponse?._id)
@@ -129,14 +155,14 @@ class SignupActivity : AppCompatActivity() {
                         // Handle failure
                         Toast.makeText(
                             this@SignupActivity,
-                            "Registration failed: ${response.code()}",
+                            "Registration failed: ${response.code()}+ ${response.message()}",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Log.d("userRegister","Error ${e.message}")
+                   e.printStackTrace()
                     Toast.makeText(this@SignupActivity, "Error: ${e.message}", Toast.LENGTH_LONG)
                         .show()
                 }
@@ -161,5 +187,18 @@ class SignupActivity : AppCompatActivity() {
     private fun getUserId(): String? {
         return sharedPreferences.getString("USER_ID", null)
     }
+
+
+    // Function to validate email format
+    fun isValidEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    // Function to validate password (min 6 characters, must include letters, digits, and special characters)
+    fun isValidPassword(password: String): Boolean {
+        val passwordPattern = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#\$%^&+=!])(?=\\S+\$).{6,}\$"
+        return password.matches(Regex(passwordPattern))
+    }
+
 
 }

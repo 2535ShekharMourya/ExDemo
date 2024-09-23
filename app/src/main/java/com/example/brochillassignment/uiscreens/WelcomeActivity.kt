@@ -42,16 +42,4 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-
-    // Retrieve token from SharedPreferences
-    private fun getToken(): String? {
-        val sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("TOKEN", null)
-    }
-
-    // Retrieve user id from SharedPreferences
-    private fun getUserId(): String? {
-        val sharedPreferences = getSharedPreferences("saveTokenAndIdLocally", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("USER_ID", null)
-    }
 }
